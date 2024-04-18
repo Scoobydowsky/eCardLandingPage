@@ -2,11 +2,11 @@
 
 {% block body %}
     <div class="container-fluid d-flex justify-content-center vh-100">
-        <div class="justify-content-center text-center w-75 mt-5 h-100 bg-white bg-opacity-75 mb-5">
-            <div class="bg-primary">
+        <div class="justify-content-center text-center w-75 pt-5 h-100  mb-5">
+            <div >
                 <div class="d-grid d-xxl-flex justify-content-xxl-center w-50 bg-warning container-fluid d-flex justify-content-center">
                     <div class="row vw-100">
-                        <div class="col"><img class="rounded-circle" src="" alt="profilePicture">
+                        <div class="col"><img class="rounded-circle w-50" src="{{ asset('img/Profile.png') }}" alt="profilePicture">
                             <h3>{{ user.name }}
                                 {% if user.nick %}
                                 "<i>{{ user.nick }}</i>"
@@ -17,15 +17,17 @@
                     </div>
                 </div>
             </div>
-            <div class="row" style="margin-right: 130px;margin-top: 2rem!important;margin-left: 130px;">
+            <div class="pt-2 mt-5 h-75 bg-white bg-opacity-75 mb-5">
+                <div class="row" style="margin-right: 130px;margin-top: 2rem!important;margin-left: 130px;">
                 {% for profile in profiles %}
                 <div class="col">
-                    <a class="btn btn-primary text-center d-inline-block d-xl-flex align-content-stretch justify-content-xl-center w-100" href="{{ profile.url }}" role="button">
+                    <a class="btn btn-primary text-center d-inline-block d-xl-flex align-content-stretch justify-content-xl-center w-100" href="{{ profile.url }}" target="_blank" role="button">
                         <i class="{{ profile.iconClass}} text-center d-xl-flex align-content-start align-self-center justify-content-xl-center me-2"></i>
                          {{ profile.name }}
                     </a>
                 </div>
                 {% endfor %}
+            </div>
             </div>
         </div>
     </div>
