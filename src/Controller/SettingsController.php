@@ -14,7 +14,7 @@ class SettingsController extends AbstractController implements SettingsInterface
     {
         // TODO: Implement renderSettingsPage() method.
     }
-    #[Route('/admin/profiles/',name: 'admin_list_pages')]
+    #[Route('/admin/socials/',name: 'admin_list_socials')]
     public function renderLinksList()
     {
         // TODO: Implement renderLinksList() method.
