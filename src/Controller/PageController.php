@@ -21,8 +21,7 @@ class PageController extends AbstractController implements PageInterface
     {
         $userData = $this->getterService->getUserData();
         $profiles = $this->getterService->getSocials();
-
-        dump($profiles);
+        
         return $this->render('homepage.html.twig',
         [
             'user'=>$userData,
