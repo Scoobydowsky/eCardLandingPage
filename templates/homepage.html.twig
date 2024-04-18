@@ -1,21 +1,20 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container-fluid d-flex  vh-100 ">
-        <div class="text-center mt-5">
-            <div>
-                TUTAJ PROFIL dasdasdasd
-            </div>
-
-            <div>
-                <div class="d-grid gap-2 vw-100 p-5">
-                    <button class="btn btn-primary d-flex align-items-center justify-content-center">
-                        <div class="me-3 ms-3 float-start">
-                            <i class="fa-solid fa-house"></i>
-                            ICON</div>
-                        <div class="text-center flex-grow-1">TITLE</div>
-                    </button>
+    <div class="container-fluid d-flex justify-content-center vh-100">
+        <div class="justify-content-center text-center w-75 mt-5 h-100 bg-white bg-opacity-75 mb-5">
+            <div class="bg-primary">
+                <div class="d-grid d-xxl-flex justify-content-xxl-center w-50 bg-warning container-fluid d-flex justify-content-center">
+                    <div class="row vw-100">
+                        <div class="col"><img class="rounded-circle" src="" alt="profilePicture">
+                            <h2>Name "<i>Nick</i>" Surname</h2>
+                            <p>Little Description</p>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            <div class="row" style="margin-right: 130px;margin-top: 2rem!important;margin-left: 130px;">
+                <div class="col"><a class="btn btn-primary text-center d-inline-block d-xl-flex align-content-stretch justify-content-xl-center w-100" role="button"><i class="far fa-star text-center d-xl-flex align-content-start align-self-center justify-content-xl-center"></i>Button</a></div>
             </div>
         </div>
     </div>
