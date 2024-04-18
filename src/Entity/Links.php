@@ -19,6 +19,9 @@ class Links
     #[ORM\Column(length: 255)]
     private ?string $Name = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $iconClass = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,18 @@ class Links
     public function setName(string $Name): static
     {
         $this->Name = $Name;
+
+        return $this;
+    }
+
+    public function getIconClass(): ?string
+    {
+        return $this->iconClass;
+    }
+
+    public function setIconClass(?string $iconClass): static
+    {
+        $this->iconClass = $iconClass;
 
         return $this;
     }
