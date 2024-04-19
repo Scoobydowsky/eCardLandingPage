@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+    {% block body %}
+        {% include '/components/nav.html.twig' %}
+        <div class="container container-fluid w-25 mt-5">
+            <h1>Edit User Data</h1>
+            <form>
+                <div class="input-group"><span class="input-group-text">Name:</span><input class="form-control" type="text"></div>
+                <div class="input-group mt-2"><span class="input-group-text">Surname:</span><input class="form-control" type="text"></div>
+                <div class="input-group mt-2"><span class="input-group-text">Nick:</span><input class="form-control" type="text"></div>
+                <div class="input-group mt-2"><span class="input-group-text">Description:</span><textarea class="form-control"></textarea></div>
+                <button class="btn btn-success mt-3 d-flex w-100 justify-content-center" type="submit">Button</button>
+            </form>
+        </div>
+        <div class="container container-fluid w-25 mt-5">
+            <h1>Change Profile Picture</h1>
+            <form>
+                <div class="input-group">
+                    <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                    <button class="btn btn-success" type="submit" id="inputGroupFileAddon04">Upload</button>
+                </div>
+            </form>
+        </div>
+        <div class="container container-fluid w-25 mt-5">
+            <h1>Change login</h1>
+            <form>
+                <div class="input-group"><span class="input-group-text">Login:</span><input class="form-control" type="text"></div>
+                <button class="btn btn-success mt-3 d-flex w-100 justify-content-center" type="submit">Button</button>
+            </form>
+        </div>
+        <div class="container container-fluid w-25 mt-5">
+            <h1>Change password</h1>
+            <form>
+                <div class="input-group"><span class="input-group-text">Old Password:</span><input class="form-control" type="text"></div>
+                <div class="input-group mt-2"><span class="input-group-text">New Password:</span><input class="form-control" type="text"></div>
+                <div class="input-group mt-2"><span class="input-group-text">Re-type Password:</span><input class="form-control" type="text"></div>
+                <button class="btn btn-success mt-3 d-flex w-100 justify-content-center" type="submit">Button</button>
+            </form>
+        </div>
+
+
+    {% endblock %}
