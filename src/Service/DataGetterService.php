@@ -25,4 +25,9 @@ class DataGetterService
         $links = $this->linksRepository->findAll();
         return  $links;
     }
+    public function getSocialObjectById(int $id)
+    {
+        $social = $this->linksRepository->findOneBy(['id'=>$id]);
+        return $social;
+    }
 }
