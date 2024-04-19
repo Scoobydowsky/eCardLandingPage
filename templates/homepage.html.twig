@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% if app.user %}
+        {% include '/components/nav.html.twig' %}
+    {% endif %}
     <div class="container-fluid d-flex justify-content-center vh-100">
         <div class="justify-content-center text-center w-75 pt-5 h-100  mb-5">
             <div >
