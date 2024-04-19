@@ -10,9 +10,9 @@ interface SettingsInterface
 
     public function renderAddLink();
 
-    public function renderEditLink();
+    public function renderEditLink(int $id);
 
-    public function deleteLink();
+    public function deleteLink(int $id);
 
     public function renderEditUser();
 }
