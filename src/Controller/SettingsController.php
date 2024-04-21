@@ -2,15 +2,16 @@
 
 namespace App\Controller;
 
-use App\Controller\SettingsInterface;
 use App\Service\DataGetterService;
+use App\Service\SocialService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SettingsController extends AbstractController implements SettingsInterface
 {
     public function __construct(
-        private DataGetterService $getterService
+        private DataGetterService $getterService,
+        private SocialService $socialService
     )
     {
 
@@ -20,8 +21,11 @@ class SettingsController extends AbstractController implements SettingsInterface
     public function renderSettingsPage()
     {
         // TODO: Implement renderSettingsPage() method.
-
-        return $this->render('settings/user.html.twig');
+        $user = $this->getterService->getUserData();
+        return $this->render('settings/user.html.twig',
+        [
+            'user'=>$user
+        ]);
     }
     #[Route('/admin/socials/',name: 'admin_list_socials')]
     public function renderLinksList()
@@ -32,13 +36,13 @@ class SettingsController extends AbstractController implements SettingsInterface
             'profiles'=>$profiles
         ]);
     }
-
+    #[Route('/admin/socials/add',name: 'admin_add_social')]
     public function renderAddLink()
     {
         // TODO: Implement renderAddLink() method.
     }
 
-    #[Route('//admin/socials/edit/{id}', name:'admin_edit_social')]
+    #[Route('/admin/socials/edit/{id}', name:'admin_edit_social')]
     public function renderEditLink(int $id)
     {
         $social = $this->getterService->getSocialObjectById($id);
@@ -49,14 +53,30 @@ class SettingsController extends AbstractController implements SettingsInterface
             'social'=>$social
         ]);
     }
-
+    #[Route('/admin/socials/delete/{id}',name: 'admin_delete_social')]
     public function deleteLink(int $id)
     {
-        // TODO: Implement deleteLink() method.
+        $this->socialService->deleteSocial($id);
+        return $this->redirectToRoute('admin_list_socials');
     }
 
-    public function renderEditUser()
+    public function editUserData()
     {
-        // TODO: Implement renderEditUser() method.
+        // TODO: Implement editUserData() method.
+    }
+
+    public function editLogin()
+    {
+        // TODO: Implement editLogin() method.
+    }
+
+    public function changeProfilePicture()
+    {
+        // TODO: Implement changeProfilePicture() method.
+    }
+
+    public function changePassword()
+    {
+        // TODO: Implement changePassword() method.
     }
 }
