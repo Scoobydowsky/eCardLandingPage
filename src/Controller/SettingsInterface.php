@@ -14,5 +14,11 @@ interface SettingsInterface
 
     public function deleteLink(int $id);
 
-    public function renderEditUser();
+    public function editUserData();
+
+    public function editLogin();
+
+    public function changeProfilePicture();
+
+    public function changePassword();
 }
