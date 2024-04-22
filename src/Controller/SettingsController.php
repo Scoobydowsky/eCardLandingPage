@@ -8,6 +8,7 @@ use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use function PHPUnit\Framework\returnArgument;
 
 class SettingsController extends AbstractController implements SettingsInterface
 {
@@ -96,8 +97,6 @@ class SettingsController extends AbstractController implements SettingsInterface
                 $this->addFlash('error', 'Nie podano wymaganych danych (imię i nazwisko)');
             }
         }
-        // TODO: Implement editUserData() method.
-
         return $this->redirectToRoute('admin_user_settings');
     }
 
@@ -125,9 +124,26 @@ class SettingsController extends AbstractController implements SettingsInterface
     {
         // TODO: Implement changeProfilePicture() method.
     }
-
-    public function changePassword()
+    #[Route('/admin/seetings/change-password',name: 'app_change_password')]
+    public function changePassword(Request $request)
     {
+        $oldPassword = $request->get('oldPassword');
+        $newPassword = $request->get('newPassword');
+        $reTypePassword = $request->get('reTypedPassword');
+        if($newPassword != $reTypePassword){
+            $this->addFlash('error','New password and retyped password are not equal');
+        }else
+        {
+            try {
+                $this->userService->changePassword($oldPassword, $newPassword);
+                $this->addFlash('success','Successfully changed password');
+            }catch (\Exception $exception)
+            {
+                $this->addFlash('error','Something went wrong');
+            }
+        }
         // TODO: Implement changePassword() method.
+
+        return $this->redirectToRoute('admin_user_settings');
     }
 }
