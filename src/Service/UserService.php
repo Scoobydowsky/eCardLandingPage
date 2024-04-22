@@ -28,4 +28,15 @@ class UserService
         $this->entityManager->persist($this->user);
         $this->entityManager->flush();
     }
+
+    public function updateUserData(string $name , string $surname ,
+                                   string $nick , string $description)
+    {
+        $this->user->setName($name)
+            ->setSurname($surname)
+            ->setNick($nick)
+            ->setDescription($description);
+        $this->entityManager->persist($this->user);
+        $this->entityManager->flush();
+    }
 }
