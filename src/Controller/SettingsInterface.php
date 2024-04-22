@@ -20,7 +20,7 @@ interface SettingsInterface
 
     public function editLogin(Request $request);
 
-    public function changeProfilePicture();
+    public function changeProfilePicture(Request $request);
 
     public function changePassword(Request $request);
 }

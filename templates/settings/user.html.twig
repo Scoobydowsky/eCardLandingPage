@@ -25,14 +25,14 @@
                     </div>
                     <div class="col">
                         <h1>Change Profile Picture</h1>
-                        <form>
+                        <form method="post" action="{{ path('app_change_avatar') }}" enctype="multipart/form-data">
                             <div class="input-group">
                                 <h5>Current photo:</h5>
                                 <div class="row justify-content-center">
                                     <img class="rounded-circle w-50" src="{{ asset('img/Profile.png') }}" alt="profilePicture">
                                 </div>
                                 <div class="row w-100 mt-3">
-                                    <input type="file" class="form-control w-75" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                                    <input type="file" class="form-control w-75" id="inputGroupFile04" name="avatar" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
                                     <button class="btn btn-success w-25" type="submit" id="inputGroupFileAddon04"><i class="fa-solid fa-upload text-center me-2"></i>Upload</button>
                                 </div>
 

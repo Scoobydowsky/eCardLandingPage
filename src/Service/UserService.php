@@ -53,8 +53,5 @@ class UserService extends AbstractController
         {
             $this->addFlash('error','Current password won\'t match ');
         }
-        #compare user password with old password
-        #if true update user password with new password
-
     }
 }

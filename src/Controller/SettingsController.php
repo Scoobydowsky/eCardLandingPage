@@ -5,10 +5,10 @@ namespace App\Controller;
 use App\Service\DataGetterService;
 use App\Service\SocialService;
 use App\Service\UserService;
+use Intervention\Image\ImageManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use function PHPUnit\Framework\returnArgument;
 
 class SettingsController extends AbstractController implements SettingsInterface
 {
@@ -120,9 +120,25 @@ class SettingsController extends AbstractController implements SettingsInterface
         return $this->redirectToRoute('admin_user_settings');
     }
 
-    public function changeProfilePicture()
+    #[Route('/admin/settings/change-avatar',name: 'app_change_avatar')]
+    public function changeProfilePicture(Request $request)
     {
+        $profilePicture = $request->files->get('avatar');
+        if($profilePicture){
+            $avatarRoute = $this->getParameter('kernel.project_dir') ."/public/img/Profile.png";
+            $imageManager = new ImageManager(array('driver' => 'gd'));
+            $avatar = $imageManager->make($profilePicture->getPathname());
+            $avatar->fit(500,500,function ($constraint)
+            {
+                $constraint->upsize();
+            });
+            $avatar->save($avatarRoute, 75, 'png');
+            $this->addFlash('success','Successfuly changed avatar');
+        }else{
+            $this->addFlash('error','You not select picture to upload');
+        }
         // TODO: Implement changeProfilePicture() method.
+        return $this->redirectToRoute('admin_user_settings');
     }
     #[Route('/admin/seetings/change-password',name: 'app_change_password')]
     public function changePassword(Request $request)
