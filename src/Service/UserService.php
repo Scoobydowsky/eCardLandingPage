@@ -5,13 +5,16 @@ namespace App\Service;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserService
+class UserService extends AbstractController
 {
     private $user ;
     public function __construct(
         private UserRepository $userRepository,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private UserPasswordHasherInterface $passwordHasher
     )
     {
         try {
@@ -38,5 +41,20 @@ class UserService
             ->setDescription($description);
         $this->entityManager->persist($this->user);
         $this->entityManager->flush();
+    }
+    public function changePassword(string $oldPassword, string $newPassword)
+    {
+        if($this->passwordHasher->isPasswordValid($this->user,$oldPassword)){
+            $hashedPassword = $this->passwordHasher->hashPassword($this->user, $newPassword);
+            $this->user->setPassword($hashedPassword);
+            $this->entityManager->persist($this->user);
+            $this->entityManager->flush();
+        }else
+        {
+            $this->addFlash('error','Current password won\'t match ');
+        }
+        #compare user password with old password
+        #if true update user password with new password
+
     }
 }
