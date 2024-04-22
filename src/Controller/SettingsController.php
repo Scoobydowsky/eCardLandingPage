@@ -11,7 +11,8 @@ class SettingsController extends AbstractController implements SettingsInterface
 {
     public function __construct(
         private DataGetterService $getterService,
-        private SocialService $socialService
+        private SocialService $socialService,
+        private UserService $userService
     )
     {
 
