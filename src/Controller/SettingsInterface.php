@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+
 interface SettingsInterface
 {
     public function renderSettingsPage();
@@ -15,6 +17,7 @@ interface SettingsInterface
     public function deleteLink(int $id);
 
     public function editUserData();
+    public function editUserData(Request $request);
 
     public function editLogin();
 
