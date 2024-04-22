@@ -63,9 +63,42 @@ class SettingsController extends AbstractController implements SettingsInterface
         return $this->redirectToRoute('admin_list_socials');
     }
 
-    public function editUserData()
+    #[Route('/admin/settings/change-user-data',name:'app_change_user_data')]
+    public function editUserData(Request $request)
     {
+        $name = $request->get('name');
+        if($name == null)
+        {
+            $this->addFlash('error', 'Nie podano imienia');
+        }
+        $surname = $request->get('surname');
+        if($surname == null)
+        {
+            $this->addFlash('error', 'Nie podano nazwiska');
+        }
+        $nick = $request->get('nick');
+        if($nick == null)
+        {
+            $this->addFlash('warning', 'Nie podano pseudonimu');
+        }
+        $description = $request->get('description');
+        if($description == null)
+        {
+            $this->addFlash('warning', 'Nie podano opisu');
+        }
+        if(($name != null)&&($surname != null))
+        {
+            try{
+                $this->userService->updateUserData($name,$surname,$nick,$description);
+            }
+            catch (\Exception $exception)
+            {
+                $this->addFlash('error', 'Nie podano wymaganych danych (imię i nazwisko)');
+            }
+        }
         // TODO: Implement editUserData() method.
+
+        return $this->redirectToRoute('admin_user_settings');
     }
 
     #[Route('/admin/settings/change-login',name:'app_change_login')]
