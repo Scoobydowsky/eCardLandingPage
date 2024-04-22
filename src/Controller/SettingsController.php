@@ -65,9 +65,24 @@ class SettingsController extends AbstractController implements SettingsInterface
         // TODO: Implement editUserData() method.
     }
 
-    public function editLogin()
+    #[Route('/admin/settings/change-login',name:'app_change_login')]
+    public function editLogin(Request $request)
     {
-        // TODO: Implement editLogin() method.
+        $login = $request->get('login');
+
+        if($login != null) {
+            try {
+                $this->userService->updateLogin($login);
+                $this->addFlash('success', 'Zmieniono login pomyślnie');
+            } catch (\Exception $exception) {
+                $this->addFlash('error', 'Nie udało się zmienić loginu');
+            }
+        }
+        else {
+            $this->addFlash('warning','Nie podano loginu do zmiany');
+        }
+
+        return $this->redirectToRoute('admin_user_settings');
     }
 
     public function changeProfilePicture()
