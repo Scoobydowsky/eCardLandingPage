@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Service\DataGetterService;
 use App\Service\SocialService;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 class SettingsController extends AbstractController implements SettingsInterface
