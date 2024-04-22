@@ -22,5 +22,5 @@ interface SettingsInterface
 
     public function changeProfilePicture();
 
-    public function changePassword();
+    public function changePassword(Request $request);
 }
