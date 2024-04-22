@@ -50,10 +50,10 @@
                     </div>
                     <div class="col">
                         <h1>Change password</h1>
-                        <form>
-                            <div class="input-group"><span class="input-group-text">Old password:</span><input class="form-control" type="text"></div>
-                            <div class="input-group mt-2"><span class="input-group-text">New password:</span><input class="form-control" type="text"></div>
-                            <div class="input-group mt-2"><span class="input-group-text">Re-type new password:</span><input class="form-control" type="text"></div>
+                        <form method="post" action="{{ path('app_change_password') }}">
+                            <div class="input-group"><span class="input-group-text">Old password:</span><input class="form-control" name="oldPassword" type="password"></div>
+                            <div class="input-group mt-2"><span class="input-group-text">New password:</span><input class="form-control" name="newPassword" type="password"></div>
+                            <div class="input-group mt-2"><span class="input-group-text">Re-type new password:</span><input class="form-control" name="reTypedPassword" type="password"></div>
                             <button class="btn btn-success mt-3 d-flex w-100 justify-content-center" type="submit"> <i class="fa-solid fa-key text-center d-xl-flex align-content-start align-self-center justify-content-xl-center me-2"></i> Change</button>
                         </form>
                     </div>
