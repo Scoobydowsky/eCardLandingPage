@@ -16,7 +16,6 @@ interface SettingsInterface
 
     public function deleteLink(int $id);
 
-    public function editUserData();
     public function editUserData(Request $request);
 
     public function editLogin();
