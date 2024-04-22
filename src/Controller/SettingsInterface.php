@@ -18,7 +18,7 @@ interface SettingsInterface
 
     public function editUserData(Request $request);
 
-    public function editLogin();
+    public function editLogin(Request $request);
 
     public function changeProfilePicture();
 
