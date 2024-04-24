@@ -12,7 +12,7 @@ interface SettingsInterface
 
     public function renderAddLink(Request $request);
 
-    public function renderEditLink(int $id);
+    public function renderEditLink(int $id,Request $request);
 
     public function deleteLink(int $id);
 

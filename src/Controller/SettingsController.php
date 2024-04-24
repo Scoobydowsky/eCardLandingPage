@@ -41,16 +41,54 @@ class SettingsController extends AbstractController implements SettingsInterface
         ]);
     }
     #[Route('/admin/socials/add',name: 'admin_add_social')]
-    public function renderAddLink()
+    public function renderAddLink(Request $request)
     {
+        if($request->isMethod('POST')){
+            $name = $request->get('name');
+            $address = $request->get('url');
+//            TODO CHECK IF ADRESS GOT HTTP
+            $icon = $request->get('icon');
+            if(!$name && !$address)
+            {
+                $this->addFlash('error','Name and Adress are required');
+                return $this->redirectToRoute('admin_add_social',
+                    [
+                        'social'=>null
+                    ]);
+            }
+            else
+            {
+                $this->socialService->addNewSocial($name,$address,$icon);
+            }
+
+            return $this->redirectToRoute('admin_list_socials');
+        }
         // TODO: Implement renderAddLink() method.
+        return $this->render('settings/socials/page.html.twig',
+        [
+            'social'=>null
+        ]);
     }
 
     #[Route('/admin/socials/edit/{id}', name:'admin_edit_social')]
-    public function renderEditLink(int $id)
+    public function renderEditLink(int $id,Request $request)
     {
         $social = $this->getterService->getSocialObjectById($id);
+        $name = $request->get('name');
+        $address = $request->get('url');
+        $icon = $request->get('icon');
         // TODO: Implement renderEditLink() method.
+        if(!$name && !$address)
+        {
+            $this->addFlash('error','Name and Adress are required');
+        }
+        else
+        {
+            $this->socialService->editSocial($social,$name,$address,$icon);
+
+
+            $this->redirectToRoute('admin_list_socials');
+        }
 
         return $this->render('settings/socials/page.html.twig',
         [

@@ -31,10 +31,26 @@ class SocialService extends AbstractController
                 ->setIconClass($icon);
             $this->entityManager->persist($SocialProfile);
             $this->entityManager->flush();
+            $this->addFlash('success','Successfully added new social profile link');
         }
         catch (\Exception $exception)
         {
             $this->addFlash('error','Unexpected error on adding new social profile link');
+        }
+    }
+
+    public function editSocial(Links $link, string $name, string $url , string $icon)
+    {
+        try {
+            $link->setName($name)
+                ->setUrl($url)
+                ->setIconClass($icon);
+            $this->entityManager->persist($link);
+            $this->entityManager->flush();
+        }
+        catch (\Exception $exception)
+        {
+            $this->addFlash('error','Error has occurred');
         }
     }
     public function deleteSocial(int $id):bool
