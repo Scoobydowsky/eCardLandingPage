@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Links;
 use App\Repository\LinksRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
@@ -17,6 +18,24 @@ class SocialService extends AbstractController
     )
     {
 
+    }
+
+    public function addNewSocial(string $name, string $url , string $icon)
+    {
+
+
+        try {
+            $SocialProfile = new Links();
+            $SocialProfile->setName($name)
+                ->setUrl($url)
+                ->setIconClass($icon);
+            $this->entityManager->persist($SocialProfile);
+            $this->entityManager->flush();
+        }
+        catch (\Exception $exception)
+        {
+            $this->addFlash('error','Unexpected error on adding new social profile link');
+        }
     }
     public function deleteSocial(int $id):bool
     {
@@ -39,4 +58,5 @@ class SocialService extends AbstractController
         $this->addFlash('success','Pomyślnie usunięto link ');
         return true;
     }
+
 }
