@@ -10,7 +10,7 @@ interface SettingsInterface
 
     public function renderLinksList();
 
-    public function renderAddLink();
+    public function renderAddLink(Request $request);
 
     public function renderEditLink(int $id);
 
