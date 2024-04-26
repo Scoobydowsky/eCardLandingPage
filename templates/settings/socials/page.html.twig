@@ -1,12 +1,21 @@
 {% extends 'base.html.twig' %}
     {% block body %}
         {% include 'components/nav.html.twig' %}
-        <div class="container container-fluid w-25 mt-5">
+        <div class="container container-fluid w-25 bg-white bg-opacity-75 mt-5">
             <h1>{% if social %}Edit Social{% else %}Adding new Social {% endif %}</h1>
-            <form method="POST">
-                <div class="input-group"><span class="input-group-text">Name</span><input class="form-control" value="{{ social.name }}" type="text"></div>
-                <div class="input-group mt-2"><span class="input-group-text">Adress:</span><input class="form-control" value="{{ social.url }}" type="text"></div>
-                <div class="input-group mt-2"><span class="input-group-text">Icon:</span><input class="form-control" value="{{ social.iconClass }}" type="text"></div><button class="btn btn-success mt-3 d-flex w-100 justify-content-center" type="submit">Button</button>
+            <form method="POST" class="pb-3">
+                <div class="input-group"><span class="input-group-text">Name</span>
+                    <input class="form-control" value="{% if social %}{{ social.name }}{% endif %}" name="name" type="text">
+                </div>
+                <div class="input-group mt-2"><span class="input-group-text">Adress:</span><input class="form-control" value="{% if social %}{{ social.url }}{% endif %}" name="url" type="text"></div>
+                <div class="input-group mt-2"><span class="input-group-text">Icon:</span><input class="form-control" value="{% if social %}{{social.iconClass }}{% endif %}" name="icon" type="text"></div>
+                <button class="btn btn-success mt-3  d-flex w-100 justify-content-center" type="submit">
+                    {% if social %}
+                        Update
+                    {% else %}
+                        Add
+                    {% endif %}
+                </button>
             </form>
         </div>
     {% endblock %}
