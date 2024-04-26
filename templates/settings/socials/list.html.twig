@@ -10,9 +10,9 @@
                                 <div class="alert alert-warning alert-dismissible mt-5 mb-5" role="alert"><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="alert"></button><span><strong>Warning</strong> {{ message }}</span></div>
                     {% endfor %}
                     {% for message in app.flashes('success') %}
-                                <div class="alert alert-success alert-dismissible mt-5 mb-5" role="alert"><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="alert"></button><span><strong>Alert</strong> text.</span></div>
+                                <div class="alert alert-success alert-dismissible mt-5 mb-5" role="alert"><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="alert"></button><span><strong>Success</strong> {{ message }}</span></div>
                     {% endfor %}
-                <a class="btn btn-success w-75 justify-content-center container-fluid d-flex mt-3 mb-3" href="#"
+                <a class="btn btn-success w-75 justify-content-center container-fluid d-flex mt-3 mb-3" href="{{ path('admin_add_social') }}"
                    type="link">
                     <i class="fa-solid fa-plus text-center d-xl-flex align-content-start align-self-center justify-content-xl-center me-2"></i>
                     ADD </a>
@@ -40,7 +40,7 @@
                                     <td class="d-flex justify-content-center">
                                         <div class="btn-group" role="group">
                                             <a class="btn btn-warning" type="button" href="{{ path('admin_edit_social',{id: profile.id} ) }}">Edit</a>
-                                            <button class="btn btn-danger ms-1" type="button">Delete</button>
+                                            <a class="btn btn-danger ms-1" onclick="return confirm('Are you sure, you want to delete this link ?')" href="{{ path('admin_delete_social',{id: profile.id} ) }}" type="button">Delete</a>
                                         </div>
                                     </td>
                                 </tr>
