@@ -24,7 +24,6 @@ class SettingsController extends AbstractController implements SettingsInterface
     #[Route('/admin/settings',name: 'admin_user_settings')]
     public function renderSettingsPage()
     {
-        // TODO: Implement renderSettingsPage() method.
         $user = $this->getterService->getUserData();
         return $this->render('settings/user.html.twig',
         [
@@ -63,7 +62,6 @@ class SettingsController extends AbstractController implements SettingsInterface
 
             return $this->redirectToRoute('admin_list_socials');
         }
-        // TODO: Implement renderAddLink() method.
         return $this->render('settings/socials/page.html.twig',
         [
             'social'=>null
@@ -77,7 +75,6 @@ class SettingsController extends AbstractController implements SettingsInterface
         $name = $request->get('name');
         $address = $request->get('url');
         $icon = $request->get('icon');
-        // TODO: Implement renderEditLink() method.
         if(!$name && !$address)
         {
             $this->addFlash('error','Name and Adress are required');
@@ -175,7 +172,6 @@ class SettingsController extends AbstractController implements SettingsInterface
         }else{
             $this->addFlash('error','You not select picture to upload');
         }
-        // TODO: Implement changeProfilePicture() method.
         return $this->redirectToRoute('admin_user_settings');
     }
     #[Route('/admin/seetings/change-password',name: 'app_change_password')]
@@ -196,7 +192,6 @@ class SettingsController extends AbstractController implements SettingsInterface
                 $this->addFlash('error','Something went wrong');
             }
         }
-        // TODO: Implement changePassword() method.
 
         return $this->redirectToRoute('admin_user_settings');
     }
