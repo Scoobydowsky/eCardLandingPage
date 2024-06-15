@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-class SettingsController extends AbstractController implements SettingsInterface
+class SettingsController extends AbstractController
 {
     public function __construct(
         private DataGetterService $getterService,
