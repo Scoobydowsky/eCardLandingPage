@@ -14,6 +14,7 @@ class ApiController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private DataGetterService $getterService;
+    private const AUTH_TOKEN = '5bb70c57-9ca1-4bbf-b189-5d01cd1a80e5'; // W praktyce przechowuj tokeny w bezpiecznym miejscu, np. w zmiennych środowiskowych
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -34,11 +35,20 @@ class ApiController extends AbstractController
     #[Route('/api/add', methods: ["POST"])]
     public function addNewSocialViaApi(Request $request)
     {
+        // Sprawdzenie tokena autoryzacyjnego
+        $token = $request->headers->get('Authorization');
+        if ($token !== 'Bearer ' . self::AUTH_TOKEN) {
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Unauthorized or invalid token'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         $data = json_decode($request->getContent(), true);
 
         $name = $data['name'];
         $url = $data['url'];
-        $icon = $data['icon'] ;
+        $icon = $data['icon'];
 
         if (!$name || !$url) {
             return $this->json([
