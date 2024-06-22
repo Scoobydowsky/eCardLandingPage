@@ -41,17 +41,18 @@ class SocialService extends AbstractController
 
     public function editSocial(Links $link, string $name, string $url , string $icon)
     {
-        try {
-            $link->setName($name)
-                ->setUrl($url)
-                ->setIconClass($icon);
-            $this->entityManager->persist($link);
-            $this->entityManager->flush();
+        $data['name']= $name;
+        $data['url']= $url;
+        $data['icon']=$icon;
+        if($this->repository->editSocial($link,$data)){
+            $this->addFlash('success','Udało się zedytować link do profilu');
+            return true;
         }
-        catch (\Exception $exception)
-        {
-            $this->addFlash('error','Error has occurred');
+        else{
+            $this->addFlash('success','Nie udało się zedytować linku do profilu');
+            return false;
         }
+
     }
     public function deleteSocial(int $id):bool
     {

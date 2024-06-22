@@ -72,25 +72,27 @@ class SettingsController extends AbstractController
     public function renderEditLink(int $id,Request $request)
     {
         $social = $this->getterService->getSocialObjectById($id);
-        $name = $request->get('name');
-        $address = $request->get('url');
-        $icon = $request->get('icon');
-        if(!$name && !$address)
-        {
-            $this->addFlash('error','Name and Adress are required');
+
+        if($request->isMethod('POST')){
+            $name = $request->get('name');
+            $address = $request->get('url');
+            $icon = $request->get('icon');
+
+            if($name && $address)
+            {
+                $this->socialService->editSocial($social,$name,$address,$icon);
+            }
+            else
+            {
+                $this->addFlash('error','Name and Address are required');
+                return $this->redirectToRoute('admin_edit_social',['id'=> $social->getId()]);
+            }
+            return $this->redirectToRoute('admin_list_socials');
         }
-        else
-        {
-            $this->socialService->editSocial($social,$name,$address,$icon);
-
-
-            $this->redirectToRoute('admin_list_socials');
-        }
-
         return $this->render('settings/socials/page.html.twig',
-        [
-            'social'=>$social
-        ]);
+            [
+                'social'=>$social
+            ]);
     }
     #[Route('/admin/socials/delete/{id}',name: 'admin_delete_social')]
     public function deleteLink(int $id)
