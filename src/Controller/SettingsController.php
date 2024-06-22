@@ -78,16 +78,14 @@ class SettingsController extends AbstractController
             $address = $request->get('url');
             $icon = $request->get('icon');
 
-            if($name && $address)
+            if($this->socialService->editSocial($social,$name,$address,$icon))
             {
-                $this->socialService->editSocial($social,$name,$address,$icon);
+                return $this->redirectToRoute('admin_list_socials');
             }
             else
             {
-                $this->addFlash('error','Name and Address are required');
                 return $this->redirectToRoute('admin_edit_social',['id'=> $social->getId()]);
             }
-            return $this->redirectToRoute('admin_list_socials');
         }
         return $this->render('settings/socials/page.html.twig',
             [

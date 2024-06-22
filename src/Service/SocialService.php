@@ -44,15 +44,21 @@ class SocialService extends AbstractController
         $data['name']= $name;
         $data['url']= $url;
         $data['icon']=$icon;
-        if($this->repository->editSocial($link,$data)){
-            $this->addFlash('success','Udało się zedytować link do profilu');
-            return true;
-        }
-        else{
-            $this->addFlash('success','Nie udało się zedytować linku do profilu');
-            return false;
-        }
 
+        if($data['name'] != null || $data['url'] != null){
+            if($this->repository->editSocial($link,$data)){
+                $this->addFlash('success','Udało się zedytować link do profilu');
+                return true;
+            }
+            else{
+                $this->addFlash('success','Nie udało się zedytować linku do profilu');
+                return false;
+            }
+        }else{
+            $this->addFlash('error','Name and Address are required');
+            return false;
+
+        }
     }
     public function deleteSocial(int $id):bool
     {
