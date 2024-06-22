@@ -3,78 +3,99 @@
 namespace App\Controller;
 
 use App\Entity\Links;
-use App\Service\DataGetterService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\LinksRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-    private DataGetterService $getterService;
     private const AUTH_TOKEN = '5bb70c57-9ca1-4bbf-b189-5d01cd1a80e5'; // W praktyce przechowuj tokeny w bezpiecznym miejscu, np. w zmiennych środowiskowych
+    private const VALID_AUTH_TOKEN = 'Bearer ' . self::AUTH_TOKEN;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        DataGetterService $getterService
+        private EntityManagerInterface $entityManager,
+        private LinksRepository $linksRepository
     ) {
-        $this->entityManager = $entityManager;
-        $this->getterService = $getterService;
     }
 
     #[Route('/api/list', methods: ["GET"])]
-    public function listAllSocials()
+    public function listAllSocials(): JsonResponse
     {
-        $socials = $this->getterService->getSocials();
-
-        return $this->json($socials);
+        $allSocials = $this->linksRepository->findAll();
+        $allSocials = array_map(static fn (Links $social): array => $social->toArray(), $allSocials);
+        return $this->json($allSocials);
     }
 
     #[Route('/api/add', methods: ["POST"])]
-    public function addNewSocialViaApi(Request $request)
+    public function addNewSocialViaApi(Request $request): JsonResponse
     {
-        // Sprawdzenie tokena autoryzacyjnego
-        $token = $request->headers->get('Authorization');
-        if ($token !== 'Bearer ' . self::AUTH_TOKEN) {
+        try {
+            $this->validateToken($request);
+        } catch (\Exception $exception) {
             return $this->json([
                 'status' => 'error',
-                'message' => 'Unauthorized or invalid token'
+                'message' => $exception->getMessage(),
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $data = json_decode($request->getContent(), true);
-
-        $name = $data['name'];
-        $url = $data['url'];
-        $icon = $data['icon'];
-
-        if (!$name || !$url) {
-            return $this->json([
-                'status' => 'error',
-                'message' => 'Missing required parameters'
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
+        $payload = json_decode($request->getContent(), true);
         try {
-            $SocialProfile = new Links();
-            $SocialProfile->setName($name)
-                ->setUrl($url)
-                ->setIconClass($icon);
-
-            $this->entityManager->persist($SocialProfile);
+            $socialProfile = Links::fromPayload($payload['name'], $payload['url'], $payload['icon']);
+            $this->entityManager->persist($socialProfile);
             $this->entityManager->flush();
 
             return $this->json([
                 'status' => 'success',
-                'message' => 'Successfully added new social profile link'
+                'message' => 'Successfully added new social profile link',
             ], Response::HTTP_CREATED);
         } catch (\Exception $exception) {
             return $this->json([
                 'status' => 'error',
-                'message' => 'Unexpected error on adding new social profile link'
+                'message' => 'Unexpected error on adding new social profile link',
+                'exceptionMessage' => $exception->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        //$name = $payload['name'];
+        //$url = $payload['url'];
+        //$icon = $payload['icon'];
+        //if (!$name || !$url) {
+        //    return $this->json([
+        //        'status' => 'error',
+        //        'message' => 'Missing required parameters',
+        //    ], Response::HTTP_BAD_REQUEST);
+        //}
+        //
+        //try {
+        //    $socialProfile = (new Links())
+        //        ->setName($name)
+        //        ->setUrl($url)
+        //        ->setIconClass($icon);
+        //    $this->entityManager->persist($socialProfile);
+        //    $this->entityManager->flush();
+        //
+        //    return $this->json([
+        //        'status' => 'success',
+        //        'message' => 'Successfully added new social profile link',
+        //    ], Response::HTTP_CREATED);
+        //} catch (\Exception $exception) {
+        //    return $this->json([
+        //        'status' => 'error',
+        //        'message' => 'Unexpected error on adding new social profile link',
+        //    ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        //}
+    }
+
+    /** @throws \Exception */
+    private function validateToken(Request $request): void
+    {
+        $token = $request->headers->get('Authorization');
+        if ($token !== self::VALID_AUTH_TOKEN) {
+            throw new \Exception('Unauthorized or invalid token');
         }
     }
 }
