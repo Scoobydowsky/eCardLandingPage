@@ -6,6 +6,7 @@ use App\DTO\SocialLinkDTO;
 use App\DTO\UserDataDTO;
 use App\Repository\LinksRepository;
 use App\Repository\UserRepository;
+use App\Service\AvatarService;
 use App\Service\DataGetterService;
 use App\Service\SocialService;
 use App\Service\UserService;
@@ -17,7 +18,6 @@ use Symfony\Component\Routing\Attribute\Route;
 class SettingsController extends AbstractController
 {
     public function __construct(
-        private DataGetterService $getterService,
         private SocialService $socialService,
         private UserService $userService,
         private UserRepository $userRepository,
@@ -122,8 +122,6 @@ class SettingsController extends AbstractController
     }
 
 
-
-
     #[Route('/admin/settings/change-login',name:'app_change_login')]
     public function editLogin(Request $request)
     {
@@ -144,26 +142,19 @@ class SettingsController extends AbstractController
         return $this->redirectToRoute('admin_user_settings');
     }
 
-    #[Route('/admin/settings/change-avatar',name: 'app_change_avatar')]
-    public function changeProfilePicture(Request $request)
+    #[Route('/admin/settings/change-avatar', name: 'app_change_avatar')]
+    public function changeProfilePicture(Request $request, AvatarService $avatarService)
     {
         $profilePicture = $request->files->get('avatar');
-        if($profilePicture){
-//            TODO TO PRZEBUDOWAĆ DO SERWISU
-            $avatarRoute = $this->getParameter('kernel.project_dir') ."/public/img/Profile.png";
-            $imageManager = new ImageManager(array('driver' => 'gd'));
-            $avatar = $imageManager->make($profilePicture->getPathname());
-            $avatar->fit(500,500,function ($constraint)
-            {
-                $constraint->upsize();
-            });
-            $avatar->save($avatarRoute, 75, 'png');
-            $this->addFlash('success','Successfuly changed avatar');
-        }else{
-            $this->addFlash('error','You not select picture to upload');
+        if ($avatarService->changeAvatar($profilePicture)) {
+            $this->addFlash('success', 'Successfully changed avatar');
+        } else {
+            $this->addFlash('error', 'You did not select a picture to upload');
         }
+
         return $this->redirectToRoute('admin_user_settings');
     }
+
     #[Route('/admin/seetings/change-password',name: 'app_change_password')]
     public function changePassword(Request $request)
     {
