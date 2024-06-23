@@ -31,14 +31,11 @@ class SocialService
     {
         if (!empty($name) && !empty($url)) {
             if ($this->repository->updateSocial($link, $name, $url, $icon)) {
-                $this->addFlash('success', 'Udało się zedytować link do profilu');
                 return true;
             } else {
-                $this->addFlash('error', 'Nie udało się zedytować linku do profilu');
                 return false;
             }
         } else {
-            $this->addFlash('error', 'Name and Address are required');
             return false;
         }
     }
@@ -47,7 +44,6 @@ class SocialService
         $socialProfile =$this->repository->findOneBy(['id'=>$id]);
         if ($socialProfile === null) {
             $exception = new EntityNotFoundException();
-            $this->addFlash('error','Nie znaleziono linku o podanym ID' . $exception->getMessage());
             return false;
         }
         try {
