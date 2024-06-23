@@ -14,4 +14,5 @@ class SocialLinkDTO
         $this->url = $url;
         $this->icon = $icon;
     }
+
 }

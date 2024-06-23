@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Intervention\Image\ImageManager;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class AvatarService
@@ -24,7 +25,7 @@ class AvatarService
             return false;
         }
 
-        $avatarRoute = $this->targetDir . "/img/Profile.png";
+        $avatarRoute = $this->targetDir . "/Profile.png";
         $avatar = $this->imageManager->make($profilePicture->getPathname());
         $avatar->fit(500, 500, function ($constraint) {
             $constraint->upsize();

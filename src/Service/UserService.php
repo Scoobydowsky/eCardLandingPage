@@ -42,9 +42,11 @@ class UserService
         if (!$user) {
             throw new EntityNotFoundException('User not found.');
         }
+
         if (!$this->passwordHasher->isPasswordValid($user, $oldPassword)) {
             throw new \Exception('Current password does not match.');
         }
+
         $hashedPassword = $this->passwordHasher->hashPassword($user, $newPassword);
         $user->setPassword($hashedPassword);
         $this->userRepository->saveUser($user);

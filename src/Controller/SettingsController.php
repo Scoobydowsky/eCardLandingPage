@@ -10,9 +10,11 @@ use App\Service\AvatarService;
 use App\Service\DataGetterService;
 use App\Service\SocialService;
 use App\Service\UserService;
+use Doctrine\ORM\EntityNotFoundException;
 use Intervention\Image\ImageManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class SettingsController extends AbstractController
@@ -101,16 +103,15 @@ class SettingsController extends AbstractController
     #[Route('/admin/settings/change-user-data', name: 'app_change_user_data')]
     public function editUserData(Request $request)
     {
-        $dto = new UserDataDTO(
-            $request->get('name'),
-            $request->get('surname'),
-            $request->get('nick'),
-            $request->get('description')
-        );
+        $userId = $this->getUser()->getId();
+        $name = $request->get('name');
+        $surname = $request->get('surname');
+        $nick = $request->get('nick');
+        $description = $request->get('description');
 
-        if ($dto->name && $dto->surname) {
+        if ($name && $surname) {
             try {
-                $this->userService->updateUserData($dto->name, $dto->surname, $dto->nick, $dto->description);
+                $this->userService->updateUserData($userId, $name, $surname, $nick, $description);
             } catch (\Exception $exception) {
                 $this->addFlash('error', 'Wymagane Dane ( imię i nazwisko ) nie zostały podane');
             }
@@ -121,22 +122,21 @@ class SettingsController extends AbstractController
         return $this->redirectToRoute('admin_user_settings');
     }
 
-
     #[Route('/admin/settings/change-login',name:'app_change_login')]
-    public function editLogin(Request $request)
+    public function editLogin(Request $request): Response
     {
         $login = $request->get('login');
 
-        if($login != null) {
+        if ($login != null) {
             try {
-                $this->userService->updateLogin($login);
+                $userId = $this->getUser()->getId(); // Pobranie ID zalogowanego użytkownika
+                $this->userService->updateLogin($userId, $login);
                 $this->addFlash('success', 'Zmieniono login pomyślnie');
             } catch (\Exception $exception) {
                 $this->addFlash('error', 'Nie udało się zmienić loginu');
             }
-        }
-        else {
-            $this->addFlash('warning','Nie podano loginu do zmiany');
+        } else {
+            $this->addFlash('warning', 'Nie podano loginu do zmiany');
         }
 
         return $this->redirectToRoute('admin_user_settings');
@@ -155,23 +155,25 @@ class SettingsController extends AbstractController
         return $this->redirectToRoute('admin_user_settings');
     }
 
-    #[Route('/admin/seetings/change-password',name: 'app_change_password')]
+    #[Route('/admin/settings/change-password', name: 'app_change_password', methods: ['POST'])]
     public function changePassword(Request $request)
     {
+        $userId = $this->getUser()->getId();
         $oldPassword = $request->get('oldPassword');
         $newPassword = $request->get('newPassword');
-        $reTypePassword = $request->get('reTypedPassword');
-        if($newPassword != $reTypePassword){
-            $this->addFlash('error','New password and retyped password are not equal');
-        }else
-        {
-            try {
-                $this->userService->changePassword($oldPassword, $newPassword);
-                $this->addFlash('success','Successfully changed password');
-            }catch (\Exception $exception)
-            {
-                $this->addFlash('error','Something went wrong');
-            }
+
+        if (empty($oldPassword) || empty($newPassword)) {
+            $this->addFlash('error', 'Obecne hasło i nowe hasło są wymagane');
+            return $this->redirectToRoute('admin_user_settings');
+        }
+
+        try {
+            $this->userService->changePassword($userId, $oldPassword, $newPassword);
+            $this->addFlash('success', 'Hasło zostało zmienione pomyślnie');
+        } catch (EntityNotFoundException $exception) {
+            $this->addFlash('error', 'Użytkownik nie został znaleziony');
+        } catch (\Exception $exception) {
+            $this->addFlash('error', 'Wystąpił błąd podczas zmiany hasła: ' . $exception->getMessage());
         }
 
         return $this->redirectToRoute('admin_user_settings');

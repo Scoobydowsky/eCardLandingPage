@@ -12,52 +12,34 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SocialService extends AbstractController
 {
+//
+    private array $data;
+
     public function __construct(
         private LinksRepository $repository,
         private EntityManagerInterface $entityManager
     )
     {
-
     }
 
-    public function addNewSocial(string $name, string $url , string $icon)
+    public function addNewSocial(string $name, string $url, string $icon): void
     {
-
-
-        try {
-            $SocialProfile = new Links();
-            $SocialProfile->setName($name)
-                ->setUrl($url)
-                ->setIconClass($icon);
-            $this->entityManager->persist($SocialProfile);
-            $this->entityManager->flush();
-            $this->addFlash('success','Successfully added new social profile link');
-        }
-        catch (\Exception $exception)
-        {
-            $this->addFlash('error','Unexpected error on adding new social profile link');
-        }
+        $this->repository->addNewSocial($name, $url, $icon);
     }
 
-    public function editSocial(Links $link, string $name, string $url , string $icon)
+    public function editSocial(Links $link, string $name, string $url, string $icon): bool
     {
-        $data['name']= $name;
-        $data['url']= $url;
-        $data['icon']=$icon;
-
-        if($data['name'] != null || $data['url'] != null){
-            if($this->repository->editSocial($link,$data)){
-                $this->addFlash('success','Udało się zedytować link do profilu');
+        if (!empty($name) && !empty($url)) {
+            if ($this->repository->updateSocial($link, $name, $url, $icon)) {
+                $this->addFlash('success', 'Udało się zedytować link do profilu');
                 return true;
-            }
-            else{
-                $this->addFlash('success','Nie udało się zedytować linku do profilu');
+            } else {
+                $this->addFlash('error', 'Nie udało się zedytować linku do profilu');
                 return false;
             }
-        }else{
-            $this->addFlash('error','Name and Address are required');
+        } else {
+            $this->addFlash('error', 'Name and Address are required');
             return false;
-
         }
     }
     public function deleteSocial(int $id):bool

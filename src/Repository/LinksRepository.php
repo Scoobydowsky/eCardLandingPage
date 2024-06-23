@@ -21,19 +21,32 @@ class LinksRepository extends ServiceEntityRepository
         parent::__construct($registry, Links::class);
     }
 
+    public function save(Links $link): void
+    {
+        $this->getEntityManager()->persist($link);
+        $this->getEntityManager()->flush();
+    }
 
-    public function editSocial(Links $link,array $data):bool
+    public function addNewSocial(string $name, string $url, string $icon): void
+    {
+        $socialLink = new Links();
+        $socialLink->setName($name);
+        $socialLink->setUrl($url);
+        $socialLink->setIconClass($icon);
+        $this->save($socialLink);
+    }
+
+    public function updateSocial(Links $link, string $name, string $url, string $icon): bool
     {
         try {
-            $link->setName($data['name'])
-                ->setUrl($data['url'])
-                ->setIconClass($data['icon']);
-            $this->getEntityManager()->persist($link);
-            $this->getEntityManager()->flush();
-        }catch (\Exception $exception){
+            $link->setName($name);
+            $link->setUrl($url);
+            $link->setIconClass($icon);
+            $this->save($link);
+            return true;
+        } catch (\Exception $e) {
             return false;
         }
-        return true;
     }
     //    /**
     //     * @return Links[] Returns an array of Links objects
