@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\SocialLinkDTO;
 use App\DTO\UserDataDTO;
+use App\Repository\LinksRepository;
 use App\Repository\UserRepository;
 use App\Service\DataGetterService;
 use App\Service\SocialService;
@@ -19,7 +20,8 @@ class SettingsController extends AbstractController
         private DataGetterService $getterService,
         private SocialService $socialService,
         private UserService $userService,
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
+        private LinksRepository $linksRepository
     )
     {
 
@@ -37,7 +39,7 @@ class SettingsController extends AbstractController
     #[Route('/admin/socials/',name: 'admin_list_socials')]
     public function renderLinksList()
     {
-        $profiles = $this->getterService->getSocials();
+        $profiles = $this->linksRepository->findAll();
         return $this->render('settings/socials/list.html.twig',
         [
             'profiles'=>$profiles
@@ -68,7 +70,7 @@ class SettingsController extends AbstractController
     #[Route('/admin/socials/edit/{id}', name:'admin_edit_social')]
     public function renderEditLink(int $id,Request $request)
     {
-        $social = $this->getterService->getSocialObjectById($id);
+        $social = $this->linksRepository->findOneBy(['id'=>$id]);
 
         if($request->isMethod('POST')){
             $name = $request->get('name');
