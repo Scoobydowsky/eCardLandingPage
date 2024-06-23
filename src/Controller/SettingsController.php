@@ -96,7 +96,17 @@ class SettingsController extends AbstractController
     #[Route('/admin/socials/delete/{id}',name: 'admin_delete_social')]
     public function deleteLink(int $id)
     {
-        $this->socialService->deleteSocial($id);
+        try {
+            $this->socialService->deleteSocial($id);
+            $this->addFlash('success','Pomyślnie usunięto link ');
+
+
+        }catch (\Exception $exception)
+        {
+            $this->addFlash('error','Nie udało się usunąć linku ');
+
+        }
+
         return $this->redirectToRoute('admin_list_socials');
     }
 

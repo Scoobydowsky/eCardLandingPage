@@ -10,7 +10,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-class SocialService extends AbstractController
+class SocialService
 {
 //
     private array $data;
@@ -60,7 +60,6 @@ class SocialService extends AbstractController
         catch (\Exception $exception){
             echo $exception->getMessage();
         }
-        $this->addFlash('success','Pomyślnie usunięto link ');
         return true;
     }
 

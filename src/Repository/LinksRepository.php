@@ -23,8 +23,12 @@ class LinksRepository extends ServiceEntityRepository
 
     public function save(Links $link): void
     {
-        $this->getEntityManager()->persist($link);
-        $this->getEntityManager()->flush();
+        try{
+            $this->getEntityManager()->persist($link);
+            $this->getEntityManager()->flush();
+        }catch (\Exception $exception){
+            throw new \Exception('Nie udało dodać się wpisu do DB');
+        }
     }
 
     public function addNewSocial(string $name, string $url, string $icon): void
