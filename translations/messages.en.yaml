@@ -1,0 +1,5 @@
+navbar:
+  back: 'Back to Homepage'
+  socials: 'Social Profiles'
+  settings: 'Account Settings'
+  logout: 'Logout'

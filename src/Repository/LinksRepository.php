@@ -31,13 +31,14 @@ class LinksRepository extends ServiceEntityRepository
         }
     }
 
-    public function addNewSocial(string $name, string $url, string $icon): void
+    public function addNewSocial(string $name, string $url, string $icon): bool
     {
         $socialLink = new Links();
         $socialLink->setName($name);
         $socialLink->setUrl($url);
         $socialLink->setIconClass($icon);
         $this->save($socialLink);
+        return true;
     }
 
     public function updateSocial(Links $link, string $name, string $url, string $icon): bool

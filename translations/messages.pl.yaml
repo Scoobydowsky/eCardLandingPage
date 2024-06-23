@@ -1,0 +1,5 @@
+navbar:
+  back: 'Powrót do strony głównej'
+  socials: 'Profile Społecznościowe'
+  settings: 'Ustawienia'
+  logout: 'Wyloguj'

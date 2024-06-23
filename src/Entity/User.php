@@ -7,6 +7,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -19,6 +21,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank]
     private ?string $username = null;
 
     /**
@@ -31,12 +34,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $Name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $Surname = null;
 
     #[ORM\Column(length: 255)]
@@ -47,6 +53,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $apiToken = null;
+
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata):void
+    {
+        $metadata->addPropertyConstraint('username', new NotBlank())
+            ->addPropertyConstraint('password',new NotBlank())
+            ->addPropertyConstraint('name',new NotBlank())
+            ->addPropertyConstraint('surname',new NotBlank());
+    }
 
     public function getId(): ?int
     {

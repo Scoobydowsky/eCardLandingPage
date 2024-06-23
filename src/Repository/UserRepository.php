@@ -5,9 +5,11 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -48,13 +50,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function updateUserData(User $user, string $name, string $surname, string $nick, string $description): void
+    public function updateUserData(User $user, string $name, string $surname, string $nick, string $description, ValidatorInterface $validator): void
     {
         $user->setName($name)
             ->setSurname($surname)
             ->setNick($nick)
             ->setDescription($description);
-        $this->saveUser($user);
+        $errors = $validator->validate($user);
+        if(count($errors)> 0){
+            throw new \Exception('Nie wszystkie wymagane pola są wypełnione');
+        }else{
+            $this->saveUser($user);
+        }
     }
 
     //    /**

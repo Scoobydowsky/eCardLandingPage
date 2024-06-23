@@ -30,7 +30,7 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
         if (!$token || $token !== $expectedToken) {
             throw new CustomUserMessageAuthenticationException('Invalid or missing API token');
         }
-
+// validator i translacja
         return new SelfValidatingPassport(new UserBadge('api_user', function() {
             return new User('api_user', null, ['ROLE_API']);
         }));

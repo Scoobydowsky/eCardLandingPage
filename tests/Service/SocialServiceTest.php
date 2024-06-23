@@ -9,6 +9,7 @@ use App\Entity\Links;
 use App\Repository\LinksRepository;
 use App\Service\SocialService;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\Void_;
 use PHPUnit\Framework\TestCase;
 use Mockery;
 
@@ -25,6 +26,16 @@ class SocialServiceTest extends TestCase
         $this->socialService = new SocialService($this->repository, $this->entityManager);
     }
 
+    public function testAddNewSocial()
+    {
+        $name = 'Test Name';
+        $url = 'Test Url';
+        $icon = 'Test Icon';
+
+        $this->repository->shouldReceive('addNewSocial')
+            ->with($name,$url,$icon)
+            ->andReturn(true);
+    }
     public function testEditSocial(): void
     {
         $link = new Links();
@@ -40,5 +51,6 @@ class SocialServiceTest extends TestCase
 
         $this->assertTrue($result);
     }
+
 
 }
