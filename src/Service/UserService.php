@@ -8,50 +8,45 @@ use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserService extends AbstractController
+class UserService
 {
-    private $user ;
     public function __construct(
-        private UserRepository $userRepository,
-        private EntityManagerInterface $entityManager,
-        private UserPasswordHasherInterface $passwordHasher
-    )
-    {
-        try {
-            $this->user= $this->userRepository->findOneBy(['id'=>'1']);
-        }catch (EntityNotFoundException $exception)
-        {
-            throw $exception;
-        }
-
-    }
-    public function updateLogin(string $login)
-    {
-        $this->user->setUsername($login);
-        $this->entityManager->persist($this->user);
-        $this->entityManager->flush();
+       protected UserRepository $userRepository,
+       protected EntityManagerInterface $entityManager,
+       protected UserPasswordHasherInterface $passwordHasher
+    ) {
     }
 
-    public function updateUserData(string $name , string $surname ,
-                                   string $nick , string $description)
+    public function updateLogin(int $userId, string $login)
     {
-        $this->user->setName($name)
-            ->setSurname($surname)
-            ->setNick($nick)
-            ->setDescription($description);
-        $this->entityManager->persist($this->user);
-        $this->entityManager->flush();
-    }
-    public function changePassword(string $oldPassword, string $newPassword)
-    {
-        if($this->passwordHasher->isPasswordValid($this->user,$oldPassword)){
-            $hashedPassword = $this->passwordHasher->hashPassword($this->user, $newPassword);
-            $this->user->setPassword($hashedPassword);
-            $this->entityManager->persist($this->user);
-            $this->entityManager->flush();
-        }else
-        {
-            $this->addFlash('error','Current password won\'t match ');
+        $user = $this->userRepository->findUserById($userId);
+        if (!$user) {
+            throw new EntityNotFoundException('User not found.');
         }
+        $user->setUsername($login);
+        $this->userRepository->saveUser($user);
+    }
+
+    public function updateUserData(int $userId, string $name, string $surname, string $nick, string $description)
+    {
+        $user = $this->userRepository->findUserById($userId);
+        if (!$user) {
+            throw new EntityNotFoundException('User not found.');
+        }
+        $this->userRepository->updateUserData($user, $name, $surname, $nick, $description);
+    }
+
+    public function changePassword(int $userId, string $oldPassword, string $newPassword)
+    {
+        $user = $this->userRepository->findUserById($userId);
+        if (!$user) {
+            throw new EntityNotFoundException('User not found.');
+        }
+        if (!$this->passwordHasher->isPasswordValid($user, $oldPassword)) {
+            throw new \Exception('Current password does not match.');
+        }
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $newPassword);
+        $user->setPassword($hashedPassword);
+        $this->userRepository->saveUser($user);
     }
 }
