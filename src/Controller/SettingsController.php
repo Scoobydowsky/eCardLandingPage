@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\DTO\SocialLinkDTO;
+use App\DTO\UserDataDTO;
+use App\Repository\UserRepository;
 use App\Service\DataGetterService;
 use App\Service\SocialService;
 use App\Service\UserService;
@@ -15,7 +18,8 @@ class SettingsController extends AbstractController
     public function __construct(
         private DataGetterService $getterService,
         private SocialService $socialService,
-        private UserService $userService
+        private UserService $userService,
+        private UserRepository $userRepository
     )
     {
 
@@ -24,7 +28,7 @@ class SettingsController extends AbstractController
     #[Route('/admin/settings',name: 'admin_user_settings')]
     public function renderSettingsPage()
     {
-        $user = $this->getterService->getUserData();
+        $user = $this->userRepository->find(['id'=>'1']);
         return $this->render('settings/user.html.twig',
         [
             'user'=>$user
@@ -39,33 +43,26 @@ class SettingsController extends AbstractController
             'profiles'=>$profiles
         ]);
     }
-    #[Route('/admin/socials/add',name: 'admin_add_social')]
+    #[Route('/admin/socials/add', name: 'admin_add_social')]
     public function renderAddLink(Request $request)
     {
-        if($request->isMethod('POST')){
-            $name = $request->get('name');
-            $address = $request->get('url');
-//            TODO CHECK IF ADRESS GOT HTTP
-            $icon = $request->get('icon');
-            if(!$name && !$address)
-            {
-                $this->addFlash('error','Name and Adress are required');
-                return $this->redirectToRoute('admin_add_social',
-                    [
-                        'social'=>null
-                    ]);
-            }
-            else
-            {
-                $this->socialService->addNewSocial($name,$address,$icon);
-            }
+        if ($request->isMethod('POST')) {
+            $dto = new SocialLinkDTO(
+                $request->get('name'),
+                $request->get('url'),
+                $request->get('icon')
+            );
 
-            return $this->redirectToRoute('admin_list_socials');
+            if (!$dto->name || !$dto->url) {
+                $this->addFlash('error', 'Name and Address are required');
+                return $this->redirectToRoute('admin_add_social', ['social' => null]);
+            } else {
+                $this->socialService->addNewSocial($dto->name, $dto->url, $dto->icon);
+                return $this->redirectToRoute('admin_list_socials');
+            }
         }
-        return $this->render('settings/socials/page.html.twig',
-        [
-            'social'=>null
-        ]);
+
+        return $this->render('settings/socials/page.html.twig', ['social' => null]);
     }
 
     #[Route('/admin/socials/edit/{id}', name:'admin_edit_social')]
@@ -99,41 +96,31 @@ class SettingsController extends AbstractController
         return $this->redirectToRoute('admin_list_socials');
     }
 
-    #[Route('/admin/settings/change-user-data',name:'app_change_user_data')]
+    #[Route('/admin/settings/change-user-data', name: 'app_change_user_data')]
     public function editUserData(Request $request)
     {
-        $name = $request->get('name');
-        if($name == null)
-        {
-            $this->addFlash('error', 'Nie podano imienia');
-        }
-        $surname = $request->get('surname');
-        if($surname == null)
-        {
-            $this->addFlash('error', 'Nie podano nazwiska');
-        }
-        $nick = $request->get('nick');
-        if($nick == null)
-        {
-            $this->addFlash('warning', 'Nie podano pseudonimu');
-        }
-        $description = $request->get('description');
-        if($description == null)
-        {
-            $this->addFlash('warning', 'Nie podano opisu');
-        }
-        if(($name != null)&&($surname != null))
-        {
-            try{
-                $this->userService->updateUserData($name,$surname,$nick,$description);
+        $dto = new UserDataDTO(
+            $request->get('name'),
+            $request->get('surname'),
+            $request->get('nick'),
+            $request->get('description')
+        );
+
+        if ($dto->name && $dto->surname) {
+            try {
+                $this->userService->updateUserData($dto->name, $dto->surname, $dto->nick, $dto->description);
+            } catch (\Exception $exception) {
+                $this->addFlash('error', 'Wymagane Dane ( imię i nazwisko ) nie zostały podane');
             }
-            catch (\Exception $exception)
-            {
-                $this->addFlash('error', 'Nie podano wymaganych danych (imię i nazwisko)');
-            }
+        } else {
+            $this->addFlash('error', 'Imię i nazwisko jest wymagane');
         }
+
         return $this->redirectToRoute('admin_user_settings');
     }
+
+
+
 
     #[Route('/admin/settings/change-login',name:'app_change_login')]
     public function editLogin(Request $request)
@@ -160,6 +147,7 @@ class SettingsController extends AbstractController
     {
         $profilePicture = $request->files->get('avatar');
         if($profilePicture){
+//            TODO TO PRZEBUDOWAĆ DO SERWISU
             $avatarRoute = $this->getParameter('kernel.project_dir') ."/public/img/Profile.png";
             $imageManager = new ImageManager(array('driver' => 'gd'));
             $avatar = $imageManager->make($profilePicture->getPathname());
