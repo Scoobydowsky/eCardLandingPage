@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Links;
 use App\Repository\LinksRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,11 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class ApiController extends AbstractController
 {
     private const AUTH_TOKEN = '5bb70c57-9ca1-4bbf-b189-5d01cd1a80e5'; // W praktyce przechowuj tokeny w bezpiecznym miejscu, np. w zmiennych środowiskowych
-    private const VALID_AUTH_TOKEN = 'Bearer ' . self::AUTH_TOKEN;
+//    private const VALID_AUTH_TOKEN = 'Bearer ' . self::AUTH_TOKEN;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private LinksRepository $linksRepository
+        private LinksRepository $linksRepository,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -53,12 +55,14 @@ class ApiController extends AbstractController
                 'message' => 'Successfully added new social profile link',
             ], Response::HTTP_CREATED);
         } catch (\Exception $exception) {
+            $this->logger->error('Unexpected error: ' . $exception->getMessage());
             return $this->json([
                 'status' => 'error',
                 'message' => 'Unexpected error on adding new social profile link',
                 'exceptionMessage' => $exception->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
 
         //$name = $payload['name'];
         //$url = $payload['url'];
@@ -88,14 +92,21 @@ class ApiController extends AbstractController
         //        'message' => 'Unexpected error on adding new social profile link',
         //    ], Response::HTTP_INTERNAL_SERVER_ERROR);
         //}
-    }
 
-    /** @throws \Exception */
-    private function validateToken(Request $request): void
-    {
-        $token = $request->headers->get('Authorization');
-        if ($token !== self::VALID_AUTH_TOKEN) {
-            throw new \Exception('Unauthorized or invalid token');
-        }
+/** @throws \Exception */
+private function validateToken(Request $request): void
+{
+    $token = $request->headers->get('Authorization');
+    if (!$token || !$this->isTokenValid($token)) {
+        throw new \Exception('Unauthorized or invalid token');
     }
+}
+
+private function isTokenValid(string $token): bool
+{
+    // Usuń prefiks "Bearer " z tokenu
+    $token = str_replace('Bearer ', '', $token);
+    // Sprawdź, czy token istnieje w bazie danych
+    return (bool) $this->userRepository->findApiKey($token);
+}
 }

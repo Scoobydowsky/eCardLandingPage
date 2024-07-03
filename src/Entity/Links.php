@@ -62,4 +62,22 @@ class Links
 
         return $this;
     }
+
+    public static function fromPayload(string $name, string $url, ?string $iconClass = null): self
+    {
+        $link = new self();
+        $link->setName($name);
+        $link->setUrl($url);
+        $link->setIconClass($iconClass);
+
+        return $link;
+    }
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'url' => $this->getUrl(),
+        ];
+    }
 }

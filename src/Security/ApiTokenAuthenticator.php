@@ -3,6 +3,7 @@
 namespace App\Security;
 
 
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,13 +25,13 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): Passport
     {
+        $userRepo = new UserRepository();
         $token = $request->headers->get('Authorization');
         $expectedToken = '5bb70c57-9ca1-4bbf-b189-5d01cd1a80e5';  // Uwaga: przechowuj tokeny w sposób bezpieczny
-
-        if (!$token || $token !== $expectedToken) {
+        if(!$userRepo->findApiKey($token))
+        {
             throw new CustomUserMessageAuthenticationException('Invalid or missing API token');
         }
-// validator i translacja
         return new SelfValidatingPassport(new UserBadge('api_user', function() {
             return new User('api_user', null, ['ROLE_API']);
         }));
