@@ -63,4 +63,4 @@ jobs:
           app-name: 'TWzaliczenie'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_13D3BC5120484A9F8F1C908CBAD86C14 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_802A4C7A11E84B84BD0221B31F5907AC }}
